@@ -10,11 +10,15 @@ django.setup()
 #--Queries:
 
 #-- Query all books by a specific author.
-def get_books_by_author(name):
-    books = Book.objects.filter(author=name)
-    print(f"Books by {name}:")
-    for book in books:
-        print(f" - {book.title}")
+def get_books_by_author(author_name):
+    try:
+        author = Author.objects.get(name=author_name)
+        books = Book.objects.filter(author=author)
+        print(f"Books by {author}:")
+        for book in books:
+            print(f" - {book.title}")
+    except Author.DoesNotExist:
+        print("Author not found.")
 
 #-- List all books in a library
 def get_all_books_in_library(library_name):
