@@ -7,10 +7,10 @@ from .models import Book, Library
 def get_book_lists(request):
     books = Book.objects.all()
     context = {'books': books}
-    return render(request, 'list_books.html', context)
+    return render(request, 'relationship_app/list_books.html', context)
 
 # class based-views
 class get_library_details(DetailView):
     model = Library
-    template_name = 'library_detail.html'
+    template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
