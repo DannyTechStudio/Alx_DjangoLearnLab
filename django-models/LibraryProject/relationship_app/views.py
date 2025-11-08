@@ -6,6 +6,8 @@ from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import redirect
+from django.contrib.auth.decorators import user_passes_test, login_required
+from .models import UserProfile
 
 # Create your views here.
 # Function-based views
@@ -38,3 +40,26 @@ class CustomLoginView(LoginView):
 # Logout view (built-in)
 class CustomLogoutView(LogoutView):
     template_name = 'relationship_app/logout.html'
+    
+# Function-based views
+def is_admin(user):
+    return hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
+
+def is_librarian(user):
+    return hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
+
+def is_member(user):
+    return hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
+
+# Views for each role
+@user_passes_test(is_admin)
+def admin_view(request):
+    return render(request, 'relationship_app/admin_view.html')
+
+@user_passes_test(is_librarian)
+def librarian_view(request):
+    return render(request, 'relationship_app/librarian_view.html')
+
+@user_passes_test(is_member)
+def member_view(request):
+    return render(request, 'relationship_app/member_view.html')
