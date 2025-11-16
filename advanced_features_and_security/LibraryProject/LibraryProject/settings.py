@@ -54,6 +54,14 @@ SECURE_HSTS_PRELOAD = True
 CSRF_COOKIE_SAMESITE = "Lax"   # or "Strict" depending on your needs
 SESSION_COOKIE_SAMESITE = "Lax"
 
+# Redirect all HTTP requests to HTTPS
+SECURE_SSL_REDIRECT = True # Forces HTTPS on all requests
+
+# HTTP Strict Transport Security (HSTS)
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
 
 # Application definition
 INSTALLED_APPS = [
