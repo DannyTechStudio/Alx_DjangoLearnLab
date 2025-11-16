@@ -12,3 +12,7 @@ class BookForm(forms.ModelForm):
         if "<script" in title.lower():
             raise forms.ValidationError("Invalid characters in title.")
         return title.strip()
+
+class ExampleForm(forms.Form):
+    name = forms.CharField(max_length=120)
+    email = forms.EmailField()
