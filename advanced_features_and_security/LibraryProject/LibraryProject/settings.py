@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,13 +24,38 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=p_e)xer4maltla_o_sw7&2lw8#gt8(7jq6rj2_91ncfqp4rrj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Using environment variables for production
+DEBUG = os.environ.get("DJANGO_DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "example.com")
+
+# Securing cookies so they are only sent over HTTPS
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Prevent JS from accessing the session cookie
+SESSION_COOKIE_HTTPONLY = True
+
+# Note: CSRF_COOKIE_HTTPONLY should generally remain False because some JS XHR tools may read it.
+# Leave as default (False) unless you know JS doesn't need access.
+
+# Basic XSS / MIME sniffing protections (recommended)
+SECURE_BROWSER_XSS_FILTER = True               # sets X-XSS-Protection header
+SECURE_CONTENT_TYPE_NOSNIFF = True             # sets X-Content-Type-Options: nosniff
+X_FRAME_OPTIONS = "DENY"                       # prevent clickjacking
+
+# HTTP Strict Transport Security
+SECURE_HSTS_SECONDS = int(os.environ.get("DJANGO_SECURE_HSTS_SECONDS", 60))
+# In production increase to e.g. 31536000 (1 year) after testing:
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Use secure cookie SameSite policy to mitigate CSRF in some cases
+CSRF_COOKIE_SAMESITE = "Lax"   # or "Strict" depending on your needs
+SESSION_COOKIE_SAMESITE = "Lax"
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,16 +65,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bookshelf',
     'relationship_app',
+    'csp',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "csp.middleware.CSPMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'bookshelf.middleware.ContentSecurityPolicyMiddleware',
 ]
 
 ROOT_URLCONF = 'LibraryProject.urls'
@@ -132,4 +161,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'book_list'
 LOGOUT_REDIRECT_URL = 'login'
 
+# CSP Rules
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
+CSP_IMG_SRC = ("'self'", "data:")
+CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com")
+CSP_FRAME_ANCESTORS = ("'none'",)
 
