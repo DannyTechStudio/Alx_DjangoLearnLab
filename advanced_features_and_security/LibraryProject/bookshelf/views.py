@@ -3,7 +3,8 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
 from .models import Book
-from .forms import BookForm, ExampleForm
+from .forms import BookForm
+from .forms import ExampleForm
 
 # Create your views here.
 def index(request):
@@ -57,3 +58,15 @@ def delete_book(request, pk):
         return redirect('book_list')
     
     return render(request, 'bookshelf/delete_book.html', {'book': book})
+
+def example_form_view(request):
+    if request.method == "POST":
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Do something with cleaned data
+            return HttpResponse("Form submitted successfully!")
+    else:
+        form = ExampleForm()
+
+    return render(request, "bookshelf/form_example.html", {"form": form})
+
