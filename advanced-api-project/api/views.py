@@ -27,7 +27,7 @@ class ListView(generics.ListAPIView):
     filterset_fields = ['title', 'publication_year', 'author']
     
     # Searching
-    search_fields = ['title', 'author_name']
+    search_fields = ['title', 'author__name']
     
     # Ordering
     ordering_fields = ['title', 'publication_year']
@@ -54,7 +54,7 @@ class CreateView(generics.CreateAPIView):
     #--------- Customize behavior on create
     def perform_create(self, serializer):
         # Example: attach logged-in user as 'creator'
-        serializer.save(create_by=self.request.user)
+        serializer.save()
 
 
 #------------ UpdateView for modifying an existing book
@@ -66,7 +66,7 @@ class UpdateView(generics.UpdateAPIView):
     #--------- Customize behavior on update
     def perform_create(self, serializer):
         # Example: record last modifier
-        serializer.save(last_modified_by=self.request.user)
+        serializer.save()
 
 
 #------------ DeleteView for removing a book
