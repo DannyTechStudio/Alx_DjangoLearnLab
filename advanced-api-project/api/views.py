@@ -31,7 +31,7 @@ class ListView(generics.ListAPIView):
     search_fields = ['title', 'author_name']
     
     # Ordering
-    ordering_filter = ['title', 'publication_year']
+    ordering_fields = ['title', 'publication_year']
     ordering = ['title']
 
 
