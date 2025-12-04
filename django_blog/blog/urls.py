@@ -1,17 +1,15 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
-from .views import register, profile
+from .views import register, profile, PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView
 
 urlpatterns = [
-    #--------- Login (built-in)
-    path('login/', LoginView.as_view(template_name='blog/login.html'), name='login'),
-    
-    #--------- Logout (built-in)
-    path('logout/', LogoutView.as_view(template_name='blog/logout.html'), name='logout'),
-    
-    #--------- Registration (custom)
-    path('register/', register, name='register'),
-    
-    #--------- Profile page
-    path('profile/', profile, name='profile'),
+    path('login/', LoginView.as_view(template_name='blog/login.html'), name='login'),           #--------- Login (built-in)
+    path('logout/', LogoutView.as_view(template_name='blog/logout.html'), name='logout'),       #--------- Logout (built-in
+    path('register/', register, name='register'),       #--------- Registration (custom)
+    path('profile/', profile, name='profile'),          #--------- Profile page
+    path('', PostListView.as_view(), name='post-list'),
+    path('<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+    path('new/', PostCreateView.as_view(), name='post-create'),
+    path('<int:pk>/edit/', PostUpdateView.as_view(), name='post-update'),
+    path('<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
 ]
