@@ -150,18 +150,35 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     
 
 #------- Implementing search functionality
-def search_posts(request):
-    query = request.GET.get("q", "")
-    results = Post.objects.filter(
-        Q(title__icontains=query) |
-        Q(content__icontains=query) |
-        Q(tags__name__icontains=query)
-    ).distinct()
+class PostSearchView(ListView):
+    model = Post
+    template_name = "blog/search_results.html"
+    context_object_name = "results"
     
-    return render(request, "blog/search_results.hmtl", {"results": results, "query": query})
+    def get_queryset(self):
+        query = self.request.GET.get("q", "")
+        return Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["query"] = self.request.GET.get("q", "")
+        return context
 
 
-def posts_by_tag(request, slug):
-    tag = Tag.objects.get(slug=tag)
-    posts = tag.post_set.all()
-    return render(request, "blog/tag_posts.html", {"tag": tag, "posts": posts})    
+class PostsByTagListView(ListView):
+    model = Post
+    template_name = "blog/tag_posts.html"
+    context_object_name = "posts"
+
+    def get_queryset(self):
+        self.tag = Tag.objects.get(slug=self.kwargs["slug"])
+        return self.tag.post_set.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tag"] = self.tag
+        return context
