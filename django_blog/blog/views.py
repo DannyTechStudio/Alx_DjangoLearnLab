@@ -7,8 +7,9 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
-from .models import Tag, Post, Comment
+from .models import Post, Comment
 from .forms import PostForm, CommentForm
+from taggit.models import Tag
 
 
 # Create your views here.
@@ -160,7 +161,7 @@ def search_posts(request):
     return render(request, "blog/search_results.hmtl", {"results": results, "query": query})
 
 
-def posts_by_tag(request, tag_name):
-    tag = Tag.objects.get(name=tag_name)
+def posts_by_tag(request, slug):
+    tag = Tag.objects.get(slug=tag)
     posts = tag.post_set.all()
     return render(request, "blog/tag_posts.html", {"tag": tag, "posts": posts})    
