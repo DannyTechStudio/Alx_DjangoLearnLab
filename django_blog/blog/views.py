@@ -6,8 +6,10 @@ from .forms import RegisterForm
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Post, Comment
+from django.db.models import Q
+from .models import Tag, Post, Comment
 from .forms import PostForm, CommentForm
+
 
 # Create your views here.
 def register(request):
@@ -144,3 +146,21 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         comment = self.get_object()
         return self.request.user == comment.author
+    
+
+#------- Implementing search functionality
+def search_posts(request):
+    query = request.GET.get("q", "")
+    results = Post.objects.filter(
+        Q(title__icontains=query) |
+        Q(content__icontains=query) |
+        Q(tags__name__icontains=query)
+    ).distinct()
+    
+    return render(request, "blog/search_results.hmtl", {"results": results, "query": query})
+
+
+def posts_by_tag(request, tag_name):
+    tag = Tag.objects.get(name=tag_name)
+    posts = tag.post_set.all()
+    return render(request, "blog/tag_posts.html", {"tag": tag, "posts": posts})    
