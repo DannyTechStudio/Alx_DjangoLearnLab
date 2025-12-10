@@ -55,11 +55,10 @@ Your API will be available at http://127.0.0.1:8000/.
 
 The API uses DRF Token Authentication. Each registered user is issued a unique token to access protected endpoints.
 
-Register a User
+Register a User:
 
 Endpoint: POST /api/auth/register/
 Request Body:
-
 {
   "username": "johndoe",
   "email": "johndoe@example.com",
@@ -68,9 +67,7 @@ Request Body:
   "profile_picture": "<image-file>"
 }
 
-
 Response:
-
 {
   "user": {
     "username": "johndoe",
@@ -80,19 +77,16 @@ Response:
   "token": "<user-token>"
 }
 
-Login
 
+Login
 Endpoint: POST /api/auth/login/
 Request Body:
-
 {
   "username": "johndoe",
   "password": "strongpassword"
 }
 
-
 Response:
-
 {
   "user": {
     "username": "johndoe",
@@ -107,7 +101,6 @@ Endpoint: GET /api/auth/me/
 Headers: Authorization: Token <user-token>
 
 Response:
-
 {
   "username": "johndoe",
   "email": "johndoe@example.com",
@@ -121,10 +114,80 @@ Endpoint: POST /api/auth/logout/
 Headers: Authorization: Token <user-token>
 
 Response:
-
 {
   "detail": "Logout successful"
 }
 
-
 Note: Logout deletes the token, so the user must log in again to receive a new token.
+
+
+## COMMENTS API
+
+### 1. List Comments
+GET /api/comments/
+
+### 2. Retrieve Comment
+GET /api/comments/{id}/
+
+### 3. Create Comment
+POST /api/comments/
+Content-Type: application/json
+
+{
+"post": 1,
+"content": "Nice post!"
+}
+
+### 4. Update Comment
+PUT /api/comments/{id}/
+
+### 5. Delete Comment
+DELETE /api/comments/{id}/
+
+### API Test Requests (.http file)
+
+### ---------------------------
+### POSTS ENDPOINT TESTS
+### ---------------------------
+
+# Get first page of posts
+GET http://127.0.0.1:8000/api/posts/
+Accept: application/json
+
+###
+# Get second page of posts
+GET http://127.0.0.1:8000/api/posts/?page=2
+Accept: application/json
+
+###
+# Get posts with custom page size
+GET http://127.0.0.1:8000/api/posts/?page=1&page_size=20
+Accept: application/json
+
+###
+# Search posts (title or content)
+GET http://127.0.0.1:8000/api/posts/?search=django
+Accept: application/json
+
+###
+# Combine search + pagination
+GET http://127.0.0.1:8000/api/posts/?search=api&page=2
+Accept: application/json
+
+### ---------------------------
+### COMMENTS ENDPOINT TESTS
+### ---------------------------
+
+# Get comments (first page)
+GET http://127.0.0.1:8000/api/comments/
+Accept: application/json
+
+###
+# Get page 3 of comments
+GET http://127.0.0.1:8000/api/comments/?page=3
+Accept: application/json
+
+###
+# Combine search (if added later) + pagination
+GET http://127.0.0.1:8000/api/comments/?search=nice&page=1
+Accept: application/json
