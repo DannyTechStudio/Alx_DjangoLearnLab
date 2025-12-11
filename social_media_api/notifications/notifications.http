@@ -1,0 +1,100 @@
+### 1. Register a user (Author)
+POST http://127.0.0.1:8000/api/auth/register/
+Content-Type: application/json
+
+{
+  "username": "author",
+  "email": "author@test.com",
+  "password": "password123"
+}
+
+### 2. Register another user (Liker)
+POST http://127.0.0.1:8000/api/auth/register/
+Content-Type: application/json
+
+{
+  "username": "liker",
+  "email": "liker@test.com",
+  "password": "password123"
+}
+
+### 3. Login author
+POST http://127.0.0.1:8000/api/auth/login/
+Content-Type: application/json
+
+{
+  "username": "author",
+  "password": "password123"
+}
+
+### Save token manually as: {{author_token}}
+Token: <author_token>
+
+
+### 4. Login liker
+POST http://127.0.0.1:8000/api/auth/login/
+Content-Type: application/json
+
+{
+  "username": "liker",
+  "password": "password123"
+}
+
+### Save token manually as: {{liker_token}}
+Token: <liker_token>
+
+
+
+### 5. Author creates a post
+POST http://127.0.0.1:8000/api/posts/
+Content-Type: application/json
+Authorization: Token {{<author_token>}}
+
+{
+  "title": "My First Post",
+  "content": "This is the content of the post."
+}
+
+### Save post ID as: {{post_id}}
+<post_id> = 3
+
+
+### 6. Liker likes the post
+POST http://127.0.0.1:8000/api/posts/post/{{<post_id>}}/like/
+Authorization: Token {{<liker_token>}}
+
+
+
+### 7. Try liking the same post again (should fail)
+POST http://127.0.0.1:8000/api/posts/post/{{<post_id>}}/like/
+Authorization: Token {{<liker_token>}}
+
+
+
+### 8. Liker unlikes the post
+POST http://127.0.0.1:8000/api/posts/post/{{<post_id>}}/unlike/
+Authorization: Token {{<liker_token>}}
+
+
+
+### 9. Try unliking again (should fail)
+POST http://127.0.0.1:8000/api/posts/post/{{<post_id>}}/unlike/
+Authorization: Token {{<liker_token>}}
+
+
+
+### 10. Author fetches notifications (should see "liker liked your post")
+GET http://127.0.0.1:8000/api/notifications/
+Authorization: Token {{<liker_token>}}
+
+
+
+### 11. Liker fetches notifications (should be empty)
+GET http://127.0.0.1:8000/api/notifications/
+Authorization: Token {{<liker_token>}}
+
+
+
+### 12. Full notification history for author (optional verification)
+GET http://127.0.0.1:8000/api/notifications/?all=true
+Authorization: Token {{<author_token>}}
