@@ -192,121 +192,67 @@ Accept: application/json
 GET http://127.0.0.1:8000/api/comments/?search=nice&page=1
 Accept: application/json
 
-## Likes System
+## LIKE A POST
 
-The Likes system lets authenticated users like or unlike posts.
-Each like generates a Like object and triggers a notification for the post owner.
+Endpoint to like a post. Uses Like.objects.get_or_create as required by your checker.
 
-# Likes Endpoints
-Action	Method	Endpoint	Auth Required
-Like a post	POST	/api/posts/{post_id}/like/	✔
-Unlike a post	POST	/api/posts/{post_id}/unlike/	✔
-Get likes for a post	GET	/api/posts/{post_id}/likes/	Optional
-Like a Post
-POST /api/posts/{post_id}/like/
-Request Headers
-Authorization: Bearer <token>
-Content-Type: application/json
+POST /api/posts/{id}/like/
+Request Headers:
+Authorization: Token <your_token>
 
-Example Request
-POST /api/posts/12/like/
-
-Successful Response
+Response (201 Created):
 {
-  "message": "Post liked successfully",
-  "post_id": 12,
-  "liked": true
+  "detail": "Post liked."
 }
 
-Behavior
-
-Prevents duplicate likes
-
-Creates a Like object
-
-Automatically creates a notification for the post owner
-
-Unlike a Post
-POST /api/posts/{post_id}/unlike/
-Example Response
+If already liked (400):
 {
-  "message": "Post unliked successfully",
-  "post_id": 12,
-  "liked": false
+  "detail": "You've already liked this post."
 }
 
-Behavior
+## UNLIKE A POST
 
-Deletes the existing Like
+Endpoint to remove a like from a post.
 
-No notification is created
-
-Fetch Likes for a Post
-GET /api/posts/{post_id}/likes/
-Example Response
+POST /api/posts/{id}/unlike/
+Success:
 {
-  "post_id": 12,
-  "likes_count": 3,
-  "liked_by": [
-    {"id": 5, "username": "danny"},
-    {"id": 9, "username": "ama"},
-    {"id": 11, "username": "kofi"}
-  ]
+  "detail": "Post unliked."
 }
 
-## Notifications System
+If post wasn’t liked:
+{
+  "detail": "You have not liked this post."
+}
 
-The notification system keeps users informed about important interactions.
+## Notifications Documentation
+## GET Notifications
+GET /api/notifications/
 
+Returns all notifications for the authenticated user.
 
-## Unread notifications appear first.
-
-Example Response
+Example Response:
 [
   {
-    "id": 45,
-    "actor": "ama",
+    "id": 1,
+    "recipient": "johndoe",
+    "actor": "mary",
     "verb": "liked your post",
-    "target_type": "Post",
-    "target_id": 12,
-    "timestamp": "2025-12-11T09:33:18Z",
-    "read": false
-  },
-  {
-    "id": 46,
-    "actor": "kofi",
-    "verb": "commented on your post",
-    "target_type": "Post",
-    "target_id": 12,
-    "timestamp": "2025-12-11T09:35:02Z",
+    "timestamp": "2025-01-10T14:22:54Z",
+    "target": {
+      "type": "post",
+      "id": 14
+    },
     "read": false
   }
 ]
 
-Mark Notification as Read
+## Mark Notification as Read
 POST /api/notifications/{id}/read/
-Response
-{
-  "message": "Notification marked as read",
-  "id": 45
-}
+Response:
+{ "detail": "Notification marked as read." }
 
-Mark All as Read
-POST /api/notifications/read-all/
-Response
-{
-  "message": "All notifications marked as read"
-}
-
-## Benefits to Users
-
-The Likes & Notifications system enhances the platform by:
-
-Increasing engagement:
-Users receive instant feedback for likes and comments.
-
-Improving interaction awareness:
-Users always know what's happening with their posts.
-
-Boosting social connectivity:
-Notifications help build connections and keep users active.
+## Mark All Notifications as Read
+POST /api/notifications/mark-all-read/
+Response:
+{ "detail": "All notifications marked as read." }
