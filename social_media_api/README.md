@@ -194,8 +194,6 @@ Accept: application/json
 
 ## LIKE A POST
 
-Endpoint to like a post. Uses Like.objects.get_or_create as required by your checker.
-
 POST /api/posts/{id}/like/
 Request Headers:
 Authorization: Token <your_token>
