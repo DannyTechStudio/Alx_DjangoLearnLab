@@ -23,9 +23,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-%wkme$peaci55=3gfclos4&6-0b9@k-i)p)dn-0&1b36ri$1j7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['Dannybackend.pythonanywhere.com']
+
+SECURE_BROWSER_XSS_FILTER = True
+
+X_FILTER_OPTIONS = "DENY"
+
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+SECURE_SSL_REDIRECT = True
+
+SESSION_HSTS_SECONDS = 31536000
+
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+SECURE_REFERRER_POLICY = "same-origin"
 
 
 # Application definition
